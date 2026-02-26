@@ -1,1 +1,6 @@
 @import "tailwindcss";
+#searchIcon{
+    background-image: url("/images/icon-search.svg");
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+}
