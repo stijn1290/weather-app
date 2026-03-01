@@ -8,7 +8,7 @@ const searchPlace = async () => {
   try {
     const geoRes = await axios.get("https://geocoding-api.open-meteo.com/v1/search?name=" + place.value);
     const location = geoRes.data.results[0];
-    const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true`);
+    const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m`);
     emit("location", location.name);
     emit("country", location.country);
     emit("temperature", weatherRes.data.current_weather.temperature);
