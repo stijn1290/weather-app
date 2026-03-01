@@ -6,14 +6,20 @@ import axios from "axios";
 let place = ref("");
 const searchPlace = async () => {
   try {
-    const res = await axios.get("https://geocoding-api.open-meteo.com/v1/search?name=" + place.value);
-    emit("location", place.value);
+    const geoRes = await axios.get("https://geocoding-api.open-meteo.com/v1/search?name=" + place.value);
+    const location = geoRes.data.results[0];
+    const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true`);
+    emit("location", location.name);
+    emit("country", location.country);
+    emit("temperature", weatherRes.data.current_weather.temperature);
   } catch (error) {
     console.log(error);
   }
 }
 const emit = defineEmits([
   "location",
+  "temperature",
+  "country",
 ])
 </script>
 
