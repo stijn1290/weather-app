@@ -4,6 +4,8 @@ import SearchBar from "./components/SearchBar.vue";
 import WeatherConditions from "./components/WeatherConditions.vue";
 import {ref} from "vue";
 import AditionalMetrics from "./components/AditionalMetrics.vue";
+import Days from "./components/Days.vue";
+
 const selectedPlace = ref("");
 const temperature = ref("");
 const country = ref("");
@@ -11,6 +13,7 @@ const feelsLike = ref("");
 const humidity = ref("");
 const windSpeed = ref("");
 const precipitation = ref("");
+const dailyObj = ref(null);
 </script>
 
 <template>
@@ -22,12 +25,16 @@ const precipitation = ref("");
     <section class="flex flex-col justify-center items-center">
       <SearchBar @location="selectedPlace = $event" @temperature="temperature = $event"
                  @country="country = $event" @feelsLike="feelsLike = $event" @humidity="humidity = $event"
-       @windSpeed="windSpeed = $event" @precipitation="precipitation = $event"/>
+                 @windSpeed="windSpeed = $event" @precipitation="precipitation = $event"
+                 @dailyObj="dailyObj = $event"/>
     </section>
     <section class="grid grid-cols-[0.8fr_0.5fr]">
       <div class="flex flex-col gap-10">
-        <WeatherConditions :location="selectedPlace" :temperature="temperature" :country="country" />
-        <AditionalMetrics :feelsLike="feelsLike" :humidity="humidity" :windSpeed="windSpeed" :precipitation="precipitation" />
+        <WeatherConditions :location="selectedPlace" :temperature="temperature" :country="country"/>
+        <AditionalMetrics :feelsLike="feelsLike" :humidity="humidity" :windSpeed="windSpeed"
+                          :precipitation="precipitation"/>
+        <h2 class="font-medium text-xl text-white">Daily Forecast</h2>
+        <Days v-if="dailyObj" :dailyObj="dailyObj"/>
       </div>
     </section>
   </main>

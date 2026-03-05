@@ -9,13 +9,15 @@ const searchPlace = async () => {
     const geoRes = await axios.get("https://geocoding-api.open-meteo.com/v1/search?name=" + place.value);
     const location = geoRes.data.results[0];
     const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation`);
+    const weeklyWeather = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=auto`)
     emit("location", location.name);
     emit("country", location.country);
     emit("temperature", weatherRes.data.current.temperature_2m);
     emit("feelsLike", weatherRes.data.current.apparent_temperature);
     emit("humidity", weatherRes.data.current.relative_humidity_2m);
     emit("windSpeed", weatherRes.data.current.wind_speed_10m);
-    emit("precipitation", weatherRes.data.current.precipitation)
+    emit("precipitation", weatherRes.data.current.precipitation);
+    emit("dailyObj", weeklyWeather.data);
   } catch (error) {
     console.log(error);
   }
@@ -28,6 +30,7 @@ const emit = defineEmits([
   "humidity",
   "windSpeed",
   "precipitation",
+  "dailyObj",
 ])
 </script>
 
@@ -35,6 +38,7 @@ const emit = defineEmits([
   <form class="flex flex-row gap-2" @submit.prevent="searchPlace">
     <input v-model="place" type="text" id="searchIcon" class="bg-gray-700 text-gray-400 rounded-lg p-2 pl-10 pr-46 "
            placeholder="Search for a place...">
-    <input @click="searchPlace" type="submit" value="Search" class="bg-blue-600 text-white rounded-lg p-2 px-4 cursor-pointer"/>
+    <input @click="searchPlace" type="submit" value="Search"
+           class="bg-blue-600 text-white rounded-lg p-2 px-4 cursor-pointer"/>
   </form>
 </template>
