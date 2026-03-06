@@ -1,9 +1,27 @@
 <script setup>
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import axios from "axios";
 
 let place = ref("");
+onMounted(async () => {
+  try {
+    const geoRes = await axios.get("https://geocoding-api.open-meteo.com/v1/search?name=London");
+    const location = geoRes.data.results[0];
+    const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation`);
+    const weeklyWeather = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=auto`)
+    emit("location", location.name);
+    emit("country", location.country);
+    emit("temperature", weatherRes.data.current.temperature_2m);
+    emit("feelsLike", weatherRes.data.current.apparent_temperature);
+    emit("humidity", weatherRes.data.current.relative_humidity_2m);
+    emit("windSpeed", weatherRes.data.current.wind_speed_10m);
+    emit("precipitation", weatherRes.data.current.precipitation);
+    emit("dailyObj", weeklyWeather.data);
+  } catch (err) {
+    console.log(err);
+  }
+})
 const searchPlace = async () => {
   try {
     const geoRes = await axios.get("https://geocoding-api.open-meteo.com/v1/search?name=" + place.value);
